@@ -4,28 +4,26 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import java.security.Permission
 
 class PermissionViewModel(): ViewModel() {
-    val pendingPermissionQueue: ArrayDeque<String> = ArrayDeque<String>()
+    val pendingDialogQueue = mutableStateListOf<String>()
 
-    fun initializePermissions(context: Context) {
-        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            listOf<String>(
-                Manifest.permission.BLUETOOTH_SCAN,
-            )
-        } else {
-            listOf<String>(
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
+    fun onPermissionResult(permission: String, isGranted: Boolean) {
+        if(!isGranted && !this.pendingDialogQueue.contains(permission)) {
+            this.pendingDialogQueue.add(permission)
         }
+    }
 
-        permissions
-            .filter { permission: String ->
-                ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED
-            }
-            .forEach { permission: String -> this.pendingPermissionQueue.add(permission) }
+    fun declinePermissionDialog() {
+        this.pendingDialogQueue.removeAt(0)
     }
 }
 
