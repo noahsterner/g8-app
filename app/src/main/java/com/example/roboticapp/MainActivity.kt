@@ -1,6 +1,9 @@
 package com.example.roboticapp
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.roboticapp.ui.theme.RoboticAppTheme
 import com.example.roboticapp.Domains.BLE.BleCentralManager
 import com.example.roboticapp.Domains.BLE.LeDeviceListAdapter
+import com.example.roboticapp.view.PermissionsGate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +33,17 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    fun initiliazePermission(): List<String> {
+       var permissions = listOf<String>(
+           Manifest.permission.BLUETOOTH_SCAN,
+           Manifest.permission.BLUETOOTH_CONNECT,
+       )
+
+       return permissions.filter { permission ->
+            this.checkSelfPermission(permission) == PackageManager.PERMISSION_DENIED
+       }
     }
 }
 
