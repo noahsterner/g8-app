@@ -1,75 +1,108 @@
 package com.example.roboticapp.Domains.BLE
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.core.content.ContextCompat
+import androidx.compose.runtime.mutableStateListOf
+import com.example.roboticapp.data.BleDevice
 
 class BleCentralManager(
     private val bluetoothAdapter: BluetoothAdapter,
-    private val context: Context
 ) {
+
     private val bluetoothLeScanner: BluetoothLeScanner?
         get() = bluetoothAdapter.bluetoothLeScanner
 
     private var scanning = false
+
     private val handler = Handler(Looper.getMainLooper())
 
     private val SCAN_PERIOD: Long = 60000
 
-    private val leDeviceListAdapter = LeDeviceListAdapter(context)
+    val devices = mutableStateListOf<BleDevice>()
 
-    private val leScanCallback: ScanCallback = object : ScanCallback() {
-        override fun onScanResult(callbackType: Int, result: ScanResult) {
+    private val leScanCallback = object : ScanCallback() {
+
+        @SuppressLint("MissingPermission")
+        override fun onScanResult(
+            callbackType: Int,
+            result: ScanResult
+        ) {
             super.onScanResult(callbackType, result)
-            leDeviceListAdapter.addDevice(result.device)
-            leDeviceListAdapter.notifyDataSetChanged()
+
+            val device = result.device
+
+            if (!devices.any { it.address == device.address }) {
+
+                val deviceName = try {
+                    device.name ?: "Unknown device"
+                } catch (e: SecurityException) {
+                    "Unknown device"
+                }
+
+                devices.add(
+                    BleDevice(
+                        device = device,
+                        name = deviceName,
+                        address = device.address
+                    )
+                )
+
+                Log.i(
+                    "BleCentralManager",
+                    "Found device: $deviceName - ${device.address}"
+                )
+            }
         }
     }
 
-    private fun hasScanPermission(): Boolean {
-        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Manifest.permission.BLUETOOTH_SCAN
-        } else {
-            Manifest.permission.ACCESS_FINE_LOCATION
-        }
-        return ContextCompat.checkSelfPermission(context, permission) ==
-                PackageManager.PERMISSION_GRANTED
+    fun connectToDevice(device: BleDevice?) {
+        //TODO
+        Log.i(
+            "BleCentralManager",
+            "Trying to connect to device: ${device?.name}"
+        )
     }
 
     @SuppressLint("MissingPermission")
     fun scanLeDevice() {
-        if (!hasScanPermission()) {
-            Log.w("BleCentralManager", "Saknar Bluetooth-scan-behörighet")
-            return
-        }
 
         val scanner = bluetoothLeScanner
+
         if (scanner == null) {
-            Log.w("BleCentralManager", "Bluetooth är avstängt eller stöds inte")
+            Log.w(
+                "BleCentralManager",
+                "Bluetooth is turned off or not supported"
+            )
             return
         }
 
         if (!scanning) {
-            handler.postDelayed({
-                if (hasScanPermission()) {
-                    scanning = false
-                    scanner.stopScan(leScanCallback)
-                }
-            }, SCAN_PERIOD)
+
+            Log.i("BleCentralManager", "Scanning for BT devices")
+            devices.clear()
+
             scanning = true
+
             scanner.startScan(leScanCallback)
+
+            handler.postDelayed({
+
+                scanning = false
+
+                scanner.stopScan(leScanCallback)
+
+            }, SCAN_PERIOD)
+
         } else {
+
             scanning = false
+
             scanner.stopScan(leScanCallback)
         }
     }

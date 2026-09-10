@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.roboticapp.ui.theme.RoboticAppTheme
 import com.example.roboticapp.Domains.BLE.BleCentralManager
-import com.example.roboticapp.Domains.BLE.LeDeviceListAdapter
 import com.example.roboticapp.view.PermissionsGate
 
 class MainActivity : ComponentActivity() {
