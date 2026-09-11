@@ -5,10 +5,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material3.*
@@ -80,18 +82,36 @@ fun RobotHomeScreen() {
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Surface(
-                    shape = CircleShape,
-                    color = CardBackground,
-                    shadowElevation = 2.dp,
-                    modifier = Modifier.size(44.dp)
-                ) {
-                    IconButton(onClick = { /* TODO: no functionality yet */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            tint = Color.DarkGray
-                        )
+
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Surface(
+                        shape = CircleShape,
+                        color = CardBackground,
+                        shadowElevation = 2.dp,
+                        modifier = Modifier.size(44.dp)
+                    ) {
+                        IconButton(onClick = { /* TODO: no functionality yet */ }) {
+                            Icon(
+                                imageVector = Icons.Default.Bluetooth,
+                                contentDescription = "Settings",
+                                tint = Color.DarkGray
+                            )
+                        }
+                    }
+
+                    Surface(
+                        shape = CircleShape,
+                        color = CardBackground,
+                        shadowElevation = 2.dp,
+                        modifier = Modifier.size(44.dp)
+                    ) {
+                        IconButton(onClick = { /* TODO: no functionality yet */ }) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings",
+                                tint = Color.DarkGray
+                            )
+                        }
                     }
                 }
             }
