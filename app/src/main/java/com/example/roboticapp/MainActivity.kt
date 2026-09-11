@@ -1,9 +1,6 @@
 package com.example.roboticapp
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,8 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.roboticapp.ui.theme.RoboticAppTheme
-import com.example.roboticapp.Domains.BLE.BleCentralManager
-import com.example.roboticapp.view.PermissionsGate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,19 +19,29 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RoboticAppTheme {
-                ControllerPage(modifier = Modifier);
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Greeting(
+                        name = "Android",
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
             }
         }
     }
+}
 
-    fun initiliazePermission(): List<String> {
-       var permissions = listOf<String>(
-           Manifest.permission.BLUETOOTH_SCAN,
-           Manifest.permission.BLUETOOTH_CONNECT,
-       )
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
+}
 
-       return permissions.filter { permission ->
-            this.checkSelfPermission(permission) == PackageManager.PERMISSION_DENIED
-       }
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    RoboticAppTheme {
+        Greeting("Android")
     }
 }

@@ -54,5 +54,11 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+<<<<<<< HEAD
     implementation("androidx.compose.material:material-icons-extended")
+=======
+
+    // custom implementations
+    implementation(libs.androidx.compose.material.icons.extended)
+>>>>>>> 393a0d4 (Added homescreen)
 }
