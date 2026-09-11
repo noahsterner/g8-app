@@ -60,7 +60,6 @@ fun RobotHomeScreen() {
                 .padding(horizontal = 20.dp)
                 .padding(top = 24.dp, bottom = 24.dp)
         ) {
-            // ---- Header: stays pinned to the top ----
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -97,8 +96,6 @@ fun RobotHomeScreen() {
                 }
             }
 
-            // ---- Middle block: photo + name + battery row, vertically   ----
-            // ---- centered in the remaining space between header & buttons ----
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -188,7 +185,6 @@ fun RobotHomeScreen() {
                 }
             }
 
-            // ---- Buttons: anchored to the bottom ----
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
