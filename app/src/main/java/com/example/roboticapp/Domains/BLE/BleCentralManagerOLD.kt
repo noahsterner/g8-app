@@ -9,9 +9,9 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import com.example.roboticapp.data.BleDevice
+import com.example.roboticapp.data.BleDeviceOLD
 
-class BleCentralManager(
+class BleCentralManagerOLD(
     private val bluetoothAdapter: BluetoothAdapter,
 ) {
 
@@ -24,7 +24,7 @@ class BleCentralManager(
 
     private val SCAN_PERIOD: Long = 60000
 
-    val devices = mutableStateListOf<BleDevice>()
+    val devices = mutableStateListOf<BleDeviceOLD>()
 
     private val leScanCallback = object : ScanCallback() {
 
@@ -46,7 +46,7 @@ class BleCentralManager(
                 }
 
                 devices.add(
-                    BleDevice(
+                    BleDeviceOLD(
                         device = device,
                         name = deviceName,
                         address = device.address
@@ -61,7 +61,7 @@ class BleCentralManager(
         }
     }
 
-    fun connectToDevice(device: BleDevice?) {
+    fun connectToDevice(device: BleDeviceOLD?) {
         //TODO
         Log.i(
             "BleCentralManager",
