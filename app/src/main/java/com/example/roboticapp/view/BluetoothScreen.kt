@@ -11,24 +11,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.roboticapp.Domains.BLE.BleCentralManager
-import com.example.roboticapp.data.BleDevice
+import com.example.roboticapp.Domains.BLE.BleCentralManagerOLD
+import com.example.roboticapp.data.BleDeviceOLD
 
 //Mock data to see how it looks with devices
 val mockDevices = listOf(
-    BleDevice(
+    BleDeviceOLD(
         device = null,
         name = "Robot 1",
         address = "AA:BB:CC:DD:EE:01"
     ),
-    BleDevice(
+    BleDeviceOLD(
         device = null,
         name = "Robot 2",
         address = "AA:BB:CC:DD:EE:02"
     ),
-    BleDevice(
+    BleDeviceOLD(
         device = null,
         name = "Robot 3",
         address = "AA:BB:CC:DD:EE:03"
@@ -38,7 +37,7 @@ val mockDevices = listOf(
 
 @Composable
 fun BluetoothScreen(
-    bleCentralManager: BleCentralManager,
+    bleCentralManager: BleCentralManagerOLD,
     modifier: Modifier = Modifier
 ) {
 
