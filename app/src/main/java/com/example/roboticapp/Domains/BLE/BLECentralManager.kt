@@ -5,7 +5,9 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
+import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattConnectionSettings
+import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.BluetoothLeScanner
@@ -23,6 +25,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.util.containsKey
 import com.example.roboticapp.config.BLE
 import com.example.roboticapp.data.BLEPeripheral
+import java.util.UUID
+import kotlin.uuid.Uuid
 
 
 val COMMAND_SERVICE_UUID = ""
@@ -82,6 +86,12 @@ class BLECentralManager(
 
     private var _connectionAttempts = 1
     private val _gattCallback = object : BluetoothGattCallback() {
+        override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+            super.onServicesDiscovered(gatt, status)
+            Log.i("BLECentralManager", "discovered ${gatt?.services?.size}")
+            this@BLECentralManager.printGattDatabase()
+        }
+
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             super.onConnectionStateChange(gatt, status, newState)
             if(status == BluetoothGatt.GATT_SUCCESS) {
@@ -106,7 +116,15 @@ class BLECentralManager(
             }
         }
     }
-    
+
+    fun getService(serviceUuid: UUID): BluetoothGattService? {
+        return this._gatt?.getService(serviceUuid)
+    }
+
+    fun getCharacteristics(serviceUuid: UUID, characteristicUuid: UUID): BluetoothGattCharacteristic? {
+        return this._gatt?.getService(serviceUuid)?.getCharacteristic(characteristicUuid)
+    }
+
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun connect() {
         if(this._isScanning) {
@@ -145,6 +163,7 @@ class BLECentralManager(
             this._isScanning = false
         }
     }
+
     /**
      * Scan devices over Bluetooth low energy.
      **/
@@ -194,5 +213,39 @@ class BLECentralManager(
      **/
     private fun _isBluetoothEnabled(): Boolean {
         return this._bluetoothAdapter.isEnabled
+    }
+
+
+    fun printGattDatabase() {
+        if(this._gatt == null) {
+            Log.i("BLECentralManager", "No GATT connection")
+        }
+
+        this._gatt?.services?.forEach { service ->
+            Log.i("BLECentralManager", "SERVICE [${service.uuid}]")
+
+            service.characteristics.forEach { characteristic ->
+                Log.i("BLECentralManager", "    CHARACTERISTIC [${characteristic.uuid}]")
+                Log.i("BLECentralManager", "        FLAGS [${this._printCharacteristicFlags(characteristic.properties)}]")
+            }
+        }
+    }
+
+    private fun _printCharacteristicFlags(flag: Int): String {
+        val result = mutableListOf<String>()
+
+        if(flag and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
+            result.add("READ")
+        }
+
+        if(flag and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) {
+            result.add("WRITE")
+        }
+
+        if(flag and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) {
+            result.add("NOTIFY")
+        }
+
+        return result.joinToString(" | ")
     }
 }
