@@ -26,6 +26,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.util.containsKey
 import com.example.roboticapp.config.BLE
 import com.example.roboticapp.data.BLEPeripheral
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.UUID
 import kotlin.uuid.Uuid
 
@@ -46,6 +48,8 @@ class BLECentralManager(
     private val _peripheralList = mutableListOf<BLEPeripheral>()
     val peripheralList: List<BLEPeripheral>
         get() = _peripheralList
+
+    val data: MutableSharedFlow<ByteArray> = MutableSharedFlow()
 
     private val _scanSettings = ScanSettings.Builder()
         .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -114,6 +118,18 @@ class BLECentralManager(
                 } else {
                     Log.i("BLECenteralManager", "Could not conncet to BLE device")
                 }
+            }
+        }
+
+        override fun onCharacteristicRead(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            value: ByteArray,
+            status: Int
+        ) {
+            super.onCharacteristicRead(gatt, characteristic, value, status)
+            if(status == BluetoothGatt.GATT_SUCCESS) {
+                this@BLECentralManager.data.tryEmit(value)
             }
         }
     }
@@ -190,7 +206,7 @@ class BLECentralManager(
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_SCAN)
     fun scanDevices() {
         this._scanner = this._createScanner()
-        if (this._scanner != null) {
+        if (this._scanner != null && !this._isScanning) {
             this._isScanning = true
             this._scanner!!.startScan(this._scanCallback)
 
