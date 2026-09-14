@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothGattConnectionSettings
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
+import android.bluetooth.BluetoothStatusCodes
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
@@ -117,12 +118,31 @@ class BLECentralManager(
         }
     }
 
-    fun getService(serviceUuid: UUID): BluetoothGattService? {
-        return this._gatt?.getService(serviceUuid)
+    fun getService(serviceUUID: UUID): BluetoothGattService? {
+        return this._gatt?.getService(serviceUUID)
     }
 
-    fun getCharacteristics(serviceUuid: UUID, characteristicUuid: UUID): BluetoothGattCharacteristic? {
-        return this._gatt?.getService(serviceUuid)?.getCharacteristic(characteristicUuid)
+    fun getCharacteristics(serviceUUID: UUID, characteristicUUID: UUID): BluetoothGattCharacteristic? {
+        return this._gatt?.getService(serviceUUID)?.getCharacteristic(characteristicUUID)
+    }
+
+    fun write(serviceUUID: UUID, characteristicUUID: UUID, data: ByteArray, writeType: Int) {
+        val characteristic = this.getCharacteristics(serviceUUID, characteristicUUID) ?: return
+        val gatt = this._gatt ?: return
+
+        Log.i("BLECentralManager", "Write data to characteristic")
+
+        when {
+            Build.VERSION.SDK_INT >= 37 -> {
+                gatt.writeCharacteristic(characteristic, data, writeType)
+            }
+
+            else -> {
+                characteristic.setValue(data)
+                characteristic.writeType = writeType
+                gatt.writeCharacteristic(characteristic)
+            }
+        }
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
