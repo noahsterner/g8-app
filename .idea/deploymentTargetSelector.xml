@@ -4,10 +4,20 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
+<<<<<<< HEAD
         <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="MainActivity">
         <option name="selectionMode" value="DROPDOWN" />
+=======
+        <DropdownSelection timestamp="2026-09-10T10:16:10.846747200Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="Wireless" identifier="serviceName=adb-R3CRB0F8YZM-RVxKtJ" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+>>>>>>> 013dcf7 (fetch: controllerPage UI)
         <DialogSelection />
       </SelectionState>
     </selectionStates>

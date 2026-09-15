@@ -24,12 +24,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RoboticAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                ControllerPage(modifier = Modifier);
             }
         }
     }
@@ -43,21 +38,5 @@ class MainActivity : ComponentActivity() {
        return permissions.filter { permission ->
             this.checkSelfPermission(permission) == PackageManager.PERMISSION_DENIED
        }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RoboticAppTheme {
-        Greeting("Android")
     }
 }
